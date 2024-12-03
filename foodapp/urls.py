@@ -7,6 +7,5 @@ router.register(r'foodtypes', FoodTypeViewSet, basename='foodtype')
 router.register(r'foods', FoodViewSet, basename='food')
 router.register(r'comments', CommentViewSet, basename='comment')
 
-urlpatterns = [
-    path('', include(router.urls)),  
-]
+urlpatterns = router.urls
+

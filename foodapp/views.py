@@ -9,17 +9,34 @@ from django.conf import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import FoodType, Food, Comment
 from .serializers import FoodTypeSerializer, FoodSerializer, CommentSerializer, UserSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, viewsets
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from rest_framework import viewsets, permissions, throttling
+from rest_framework.pagination import PageNumberPagination
 
 class FoodTypeViewSet(viewsets.ModelViewSet):
     queryset = FoodType.objects.all()
     serializer_class = FoodTypeSerializer
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = [throttling.UserRateThrottle]  
+
+
+class FoodPagination(PageNumberPagination):
+    page_size = 2  
+    page_size_query_param = 'page_size'  
+    max_page_size = 15  
+
 class FoodViewSet(viewsets.ModelViewSet):
     queryset = Food.objects.all()
     serializer_class = FoodSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    throttle_classes = [throttling.UserRateThrottle]  
+    pagination_class = FoodPagination  
+    permission_classes = [permissions]
+    throttle_classes = [throttling.UserRateThrottle]
+
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
@@ -27,14 +44,7 @@ class CommentViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     throttle_classes = [throttling.UserRateThrottle]  
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import make_password
-
+ 
 class RegisterView(APIView):
     permission_classes = [permissions.AllowAny]
 
